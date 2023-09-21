@@ -5,6 +5,8 @@ from adafruit_rgb_display.rgb import color565
 import adafruit_rgb_display.st7789 as st7789
 import webcolors
 
+import time
+
 # The display uses a communication protocol called SPI.
 # SPI will not be covered in depth in this course. 
 # you can read more https://www.circuitbasics.com/basics-of-the-spi-communication-protocol/
@@ -47,7 +49,7 @@ while not screenColor:
         print("whoops I don't know that one")
 # Main loop:
 while True:
-    if buttonA.value and buttonB.value:
+    if buttonA.value and buttonB.value: # none pressed
         backlight.value = False  # turn off backlight
     else:
         backlight.value = True  # turn on backlight
@@ -55,6 +57,10 @@ while True:
         display.fill(screenColor) # set the screen to the users color
     if buttonA.value and not buttonB.value:  # just button B pressed
         display.fill(color565(255, 255, 255))  # set the screen to white
-    if not buttonA.value and not buttonB.value:  # none pressed
+    if not buttonA.value and not buttonB.value:  # both pressed
         display.fill(color565(0, 255, 0))  # green
+
+    # print('buttonA: ', buttonA.value)
+    # print('buttonB: ', buttonB.value)
+    # time.sleep(1)
 

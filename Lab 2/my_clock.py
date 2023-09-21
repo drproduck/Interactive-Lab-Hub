@@ -51,7 +51,7 @@ buttonB.switch_to_input()
 
 # Fix the total time for now
 minutes_total = 1
-seconds_total = 10
+seconds_total = 20
 
 def remaining_time(seconds_total, seconds_elapsed):
     if seconds_elapsed >= seconds_total:
@@ -60,35 +60,43 @@ def remaining_time(seconds_total, seconds_elapsed):
     minutes, seconds = divmod(seconds_remaining, 60)
     return f"{minutes:02}:{seconds:02}"
 
-time_start = time.time()
 
 fontsize = 30
 
+def run_clock():
+    time_start = time.time()
+
+    while True:
+        if not buttonB.value and buttonA.value:  # just button B pressed
+            return
+
+        seconds_elapsed = time.time() - time_start
+
+        # Display the frame relative to the time elapsed
+        frame_index = int(seconds_elapsed / seconds_total * nb_images)
+        frame_index = min(frame_index, nb_images - 1)
+        image = Image.open(os.path.join('output_images', f'frame_{frame_index}.png'))
+
+        # If time's up, display "Time's up!"
+        if seconds_elapsed > seconds_total:
+            text = "Time's up!"
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", fontsize)
+
+            draw = ImageDraw.Draw(image, 'RGBA')
+            draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0, 125))
+            draw.text((40, (height - fontsize) // 2), text, font=font, fill="#FFFFFF")
+
+        # Display the remaining time if button A is pressed
+        if buttonB.value and not buttonA.value:  # just button A pressed
+            text = remaining_time(seconds_total, seconds_elapsed)
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", fontsize)
+
+            draw = ImageDraw.Draw(image, 'RGBA')
+            draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0, 125))
+            draw.text((75, (height - fontsize) // 2), text, font=font, fill="#FFFFFF")
+
+        disp.image(image, rotation)
+        time.sleep(1 / 60)
+
 while True:
-    seconds_elapsed = time.time() - time_start
-
-    # Display the frame relative to the time elapsed
-    frame_index = int(seconds_elapsed / seconds_total * nb_images)
-    frame_index = min(frame_index, nb_images - 1)
-    image = Image.open(os.path.join('output_images', f'frame_{frame_index}.png'))
-
-    # If time's up, display "Time's up!"
-    if seconds_elapsed > seconds_total:
-        text = "Time's up!"
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", fontsize)
-
-        draw = ImageDraw.Draw(image, 'RGBA')
-        draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0, 125))
-        draw.text((40, (height - fontsize) // 2), text, font=font, fill="#FFFFFF")
-
-    # Display the remaining time if button A is pressed
-    if buttonB.value and not buttonA.value:  # just button A pressed
-        text = remaining_time(seconds_total, seconds_elapsed)
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", fontsize)
-
-        draw = ImageDraw.Draw(image, 'RGBA')
-        draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0, 125))
-        draw.text((75, (height - fontsize) // 2), text, font=font, fill="#FFFFFF")
-
-    disp.image(image, rotation)
-    time.sleep(1 / 60)
+    run_clock() 

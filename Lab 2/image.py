@@ -74,28 +74,43 @@ draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 disp.image(image)
 
-image = Image.open("red.jpg")
-backlight = digitalio.DigitalInOut(board.D22)
-backlight.switch_to_output()
-backlight.value = True
+
+def get_image(img_path):
+    image = Image.open(img_path)
+
+    backlight = digitalio.DigitalInOut(board.D22)
+    backlight.switch_to_output()
+    backlight.value = True
 
 
-# Scale the image to the smaller screen dimension
-image_ratio = image.width / image.height
-screen_ratio = width / height
-if screen_ratio < image_ratio:
-    scaled_width = image.width * height // image.height
-    scaled_height = height
-else:
-    scaled_width = width
-    scaled_height = image.height * width // image.width
-image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
+    # Scale the image to the smaller screen dimension
+    image_ratio = image.width / image.height
+    screen_ratio = width / height
+    if screen_ratio < image_ratio:
+        scaled_width = image.width * height // image.height
+        scaled_height = height
+    else:
+        scaled_width = width
+        scaled_height = image.height * width // image.width
+    image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
 
-# Crop and center the image
-x = scaled_width // 2 - width // 2
-y = scaled_height // 2 - height // 2
-image = image.crop((x, y, x + width, y + height))
+    # Crop and center the image
+    x = scaled_width // 2 - width // 2
+    y = scaled_height // 2 - height // 2
+    image = image.crop((x, y, x + width, y + height))
+
+    # rotate the image
+    image = image.rotate(180)
+
+    return image
+
+
+image = get_image("wut.jpeg")
+    # image = Image.open("red.jpg")
+    # image = Image.open("wut.jpeg")
 
 # Display image.
-disp.image(image)
+while True:
+    disp.image(image)
+
 
