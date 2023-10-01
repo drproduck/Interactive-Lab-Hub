@@ -7,9 +7,14 @@
 import argparse
 import queue
 import sys
+import json
+import time
 import sounddevice as sd
 
 from vosk import Model, KaldiRecognizer
+from playsound import playsound
+from gtts import gTTS
+from io import BytesIO
 
 q = queue.Queue()
 
@@ -50,6 +55,14 @@ parser.add_argument(
     "-m", "--model", type=str, help="language model; e.g. en-us, fr, nl; default is en-us")
 args = parser.parse_args(remaining)
 
+mp3_fp = BytesIO()
+# tts = gTTS('Hello! I am a drum machine that can play hi hat, bass drum and snare drum sounds. ', lang='en')
+# tts.save('hello.mp3')
+# playsound('hello.mp3')
+
+tts = gTTS("Sorry, I don't recognize the instrument you are saying.", lang='en')
+tts.save('sorry.mp3')
+
 try:
     if args.samplerate is None:
         device_info = sd.query_devices(args.device, "input")
@@ -75,11 +88,22 @@ try:
         rec = KaldiRecognizer(model, args.samplerate)
         while True:
             data = q.get()
-            print(rec.AcceptWaveform(data))
+            result = json.loads(rec.Result())["text"]
             if rec.AcceptWaveform(data):
-                print(rec.Result())
+                print('completed', result)
+                if (result == "hi hat"):
+                    print("Now playing hi hat.")
+                    playsound("short-open-hi-hat.wav")
+                elif (result == "snare drum"): 
+                    print("Now playing snare drum.")
+                    playsound("wide-snare-drum_B_minor.wav")
+                elif (result == "bass drum"):
+                    print("Now playing bass drum.")
+                    playsound("bass-drum-hit.wav")
+                else:
+                    playsound('sorry.mp3')
             else:
-                print(rec.PartialResult())
+                print('partial', result)
             if dump_fn is not None:
                 dump_fn.write(data)
 
