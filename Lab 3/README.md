@@ -73,6 +73,8 @@ You can also play audio files directly with `aplay filename`. Try typing `aplay 
 \*\***Write your own shell file to use your favorite of these TTS engines to have your Pi greet you by name.**\*\*
 (This shell file should be saved to your own repo for this lab.)
 
+See [greet.sh](speech-scripts/greet.sh).
+
 ---
 Bonus:
 [Piper](https://github.com/rhasspy/piper) is another fast neural based text to speech package for raspberry pi which can be installed easily through python with:
@@ -114,6 +116,7 @@ python test_microphone.py -m en
 
 \*\***Write your own shell file that verbally asks for a numerical based input (such as a phone number, zipcode, number of pets, etc) and records the answer the respondent provides.**\*\*
 
+See [numerical.sh](./speech-scripts/numerical.sh) and [numerical.py](./speech-scripts/numerical.py).
 
 ### Serving Pages
 
