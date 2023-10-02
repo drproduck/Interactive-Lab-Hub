@@ -9,13 +9,20 @@ import queue
 import sys
 import json
 import time
+from pynput import keyboard
 import sounddevice as sd
 
 from vosk import Model, KaldiRecognizer
+from playsound import playsound
 from gtts import gTTS
 from io import BytesIO
+
 from pydub import AudioSegment
-from pydub.playback import _play_with_simpleaudio, play
+from pydub.playback import _play_with_simpleaudio
+
+from multiprocessing import Process
+
+# Play the audio using simpleaudio
 
 q = queue.Queue()
 
@@ -57,24 +64,52 @@ parser.add_argument(
 args = parser.parse_args(remaining)
 
 mp3_fp = BytesIO()
-tts = gTTS('Hello! I am a drum machine that can play hi hat, bass drum and snare drum sounds. ', lang='en')
-tts.save('hello.mp3')
+# tts = gTTS('Hello! I am a drum machine that can play hi hat, bass drum and snare drum sounds. ', lang='en')
+tts = gTTS('Hello!', lang='en')
+tts.save('hello.wav')
+
+# tts = gTTS("Sorry, I don't recognize the instrument you are saying.", lang='en')
+tts = gTTS("Sorry.", lang='en')
+tts.save('sorry.wav')
 
 
-tts = gTTS("Sorry, I don't recognize the instrument you are saying.", lang='en')
-tts.save('sorry.mp3')
+###############################################################
+# LOOP
 
-##################################
-# SOUNDS
+
 sounds = {
     'hi-hat': AudioSegment.from_file('short-open-hi-hat.wav'),
     'snare-drum': AudioSegment.from_file('wide-snare-drum_B_minor.wav'),
-    'bass-drum': AudioSegment.from_file('bass-drum-hit.wav'),
-    'hello': AudioSegment.from_file('hello.mp3'),
-    'sorry': AudioSegment.from_file('sorry.mp3')
+    'base-drum': AudioSegment.from_file('bass-drum-hit.wav'),
+    'hello': AudioSegment.from_file('hello.wav'),
+    'sorry': AudioSegment.from_file('sorry.wav'),
 }
 
-play(sounds['hello'])
+_play_with_simpleaudio(sounds['hello'])
+
+def get_sound_name(rec, data):
+    if rec.AcceptWaveform(data):
+        result = json.loads(rec.Result())["text"]
+        if (result.find("hi hat") != -1):
+            print("Switching to hi hat.")
+            return "hi-hat"
+            # playsound("short-open-hi-hat.wav")
+        elif (result.find("snare drum") != -1): 
+            print("Switching to snare drum.")
+            return "snare-drum"
+            # playsound("wide-snare-drum_B_minor.wav")
+        elif (result.find("bass drum") != -1):
+            print("Switching to bass drum.")
+            return "bass-drum"
+            # playsound("bass-drum-hit.wav")
+
+    return ""
+
+##############################
+# keyboard
+
+##############################
+sound_name = ""
 
 try:
     if args.samplerate is None:
@@ -98,40 +133,49 @@ try:
         print("Press Ctrl+C to stop the recording")
         print("#" * 80)
 
-        rec = KaldiRecognizer(model, args.samplerate, '["bass", "snare", "drum", "hi", "hat", "[unk]"]')
+        rec = KaldiRecognizer(model, args.samplerate, '["bass", "snare", "drum", "hi", "hat", "start", "[unk]"]')
         last_sorry_playback_time = 0
+
+
+        start_time = 0
+        time_list = []
+
+        # playlist = []
+
+        start_time = time.time()
+        interval_duration = 3 # second
+        curr_interval = 0
+
+        song = AudioSegment.silent(duration=interval_duration * 1000)
+
+        def on_press(key):
+            global song
+            if key == keyboard.Key.space and sound_name != "":
+                _play_with_simpleaudio(sounds[sound_name])
+                song = song.overlay(sounds[sound_name], position=1000 * (curr_time % interval_duration))
+
+        listener = keyboard.Listener(
+            on_press=on_press,
+        )
+
+        listener.start()
+
         while True:
             data = q.get()
-            clear = False
-            if rec.AcceptWaveform(data):
-                result = json.loads(rec.Result())["text"]
-                if (result.find("hi hat") != -1):
-                    print("Now playing hi hat.")
-                    # playsound("short-open-hi-hat.wav")
-                    _play_with_simpleaudio(sounds["hi-hat"])
-                elif (result.find("snare drum") != -1): 
-                    print("Now playing snare drum.")
-                    # playsound("wide-snare-drum_B_minor.wav")
-                    _play_with_simpleaudio(sounds["snare-drum"])
-                elif (result.find("bass drum") != -1):
-                    print("Now playing bass drum.")
-                    # playsound("bass-drum-hit.wav")
-                    _play_with_simpleaudio(sounds["bass-drum"])
-                else:
-                    pass
-                    # current_time = time.time()
-                    # if current_time - last_sorry_playback_time > 10:
-                    #     # playsound('sorry.mp3', True)
-                    #     _play_with_simpleaudio(sounds["snare-drum"])
-                    # last_sorry_playback_time = current_time
-                print(result)
-            else:
-                pass
-                # print(rec.PartialResult())
-            
-            if dump_fn is not None:
-                dump_fn.write(data)
-            # time.sleep(1)
+            temp_sound_name = get_sound_name(rec, data)
+            if temp_sound_name != "":
+                sound_name = temp_sound_name
+
+            curr_time = time.time()
+
+            this_interval = (curr_time - start_time) // interval_duration
+            if this_interval > curr_interval:
+                curr_interval = this_interval
+
+                # start playing. does it block?
+                _play_with_simpleaudio(song)
+
+
 
 except KeyboardInterrupt:
     print("\nDone")

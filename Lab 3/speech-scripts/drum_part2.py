@@ -9,13 +9,22 @@ import queue
 import sys
 import json
 import time
+# import keyboard
 import sounddevice as sd
 
 from vosk import Model, KaldiRecognizer
+# from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import _play_with_simpleaudio
 from gtts import gTTS
 from io import BytesIO
-from pydub import AudioSegment
-from pydub.playback import _play_with_simpleaudio, play
+
+import board
+import busio
+import adafruit_mpr121
+
+i2c = busio.I2C(board.SCL, board.SDA)
+mpr121 = adafruit_mpr121.MPR121(i2c)
 
 q = queue.Queue()
 
@@ -57,12 +66,13 @@ parser.add_argument(
 args = parser.parse_args(remaining)
 
 mp3_fp = BytesIO()
-tts = gTTS('Hello! I am a drum machine that can play hi hat, bass drum and snare drum sounds. ', lang='en')
+tts = gTTS('Hello! I am a drum machine that can play hi hat, bass drum and snare drum sounds. If you say start, I can record your beats and repeat them. Say clear to stop the recording.', lang='en')
+# tts = gTTS('Hello!', lang='en')
 tts.save('hello.mp3')
 
-
-tts = gTTS("Sorry, I don't recognize the instrument you are saying.", lang='en')
-tts.save('sorry.mp3')
+# tts = gTTS("Sorry, I don't recognize the instrument you are saying.", lang='en')
+# tts = gTTS("Sorry.", lang='en')
+# tts.save('sorry.wav')
 
 ##################################
 # SOUNDS
@@ -74,14 +84,15 @@ sounds = {
     'sorry': AudioSegment.from_file('sorry.mp3')
 }
 
-play(sounds['hello'])
+# playsound("hello.mp3")
+_play_with_simpleaudio(sounds['hello'])
 
 try:
     if args.samplerate is None:
         device_info = sd.query_devices(args.device, "input")
         # soundfile expects an int, sounddevice provides a float:
         args.samplerate = int(device_info["default_samplerate"])
-        
+
     if args.model is None:
         model = Model(lang="en-us")
     else:
@@ -98,37 +109,81 @@ try:
         print("Press Ctrl+C to stop the recording")
         print("#" * 80)
 
-        rec = KaldiRecognizer(model, args.samplerate, '["bass", "snare", "drum", "hi", "hat", "[unk]"]')
+        rec = KaldiRecognizer(model, args.samplerate, '["bass", "snare", "drum", "hi", "hat", "start", "clear", "[unk]"]')
         last_sorry_playback_time = 0
+
+        sound_name = ""
+        recording = False
+        playback = False
+        start_time = 0
+        i = 0
+        time_list = []
+
         while True:
             data = q.get()
             clear = False
             if rec.AcceptWaveform(data):
                 result = json.loads(rec.Result())["text"]
                 if (result.find("hi hat") != -1):
-                    print("Now playing hi hat.")
+                    print("Switching to hi hat.")
+                    sound_name = "hi-hat"
                     # playsound("short-open-hi-hat.wav")
-                    _play_with_simpleaudio(sounds["hi-hat"])
-                elif (result.find("snare drum") != -1): 
-                    print("Now playing snare drum.")
+                elif (result.find("snare drum") != -1):
+                    print("Switching to snare drum.")
+                    sound_name = "snare-drum"
                     # playsound("wide-snare-drum_B_minor.wav")
-                    _play_with_simpleaudio(sounds["snare-drum"])
                 elif (result.find("bass drum") != -1):
-                    print("Now playing bass drum.")
+                    print("Switching to bass drum.")
+                    sound_name = "bass-drum"
                     # playsound("bass-drum-hit.wav")
-                    _play_with_simpleaudio(sounds["bass-drum"])
-                else:
-                    pass
-                    # current_time = time.time()
+                elif (result.find("start") != -1):
+                    recording = True
+                    start_time = time.time()
+                elif (result.find("clear") != -1):
+                    recording = False
+                    time_list = []
+                elif sound_name == "":
+                    # sound_name = ""
+                    current_time = time.time()
                     # if current_time - last_sorry_playback_time > 10:
-                    #     # playsound('sorry.mp3', True)
-                    #     _play_with_simpleaudio(sounds["snare-drum"])
-                    # last_sorry_playback_time = current_time
+                        # playsound('sorry.mp3', True)
+                        # _play_with_simpleaudio(sounds['sorry'])
+                    last_sorry_playback_time = current_time
                 print(result)
             else:
                 pass
                 # print(rec.PartialResult())
-            
+            if playback:
+                if (time.time() - playback_time > 4):
+                    # Loop recording
+                    playback_time = time.time()
+                    start_time = playback_time
+                    i = 0
+                    print("loop")
+                elif (i < len(time_list) and time.time() - playback_time >= time_list[i][0]):
+                    _play_with_simpleaudio(sounds[time_list[i][1]])
+                    # playsound(time_list[i][1], False)
+                    i = i + 1
+            elif recording and time.time() - start_time > 4:
+                # play back
+                playback = True
+                playback_time = time.time()
+                print("start playback")
+
+            if sound_name != "" and mpr121[2].value:
+                if recording and time.time() - start_time < 4:
+                    time_list.append((time.time() - start_time, sound_name))
+                    time_list = sorted(time_list, key=lambda tup: tup[0]) # sort time_list by time (first entry)
+                    print(time_list)
+                    if not playback:
+                        _play_with_simpleaudio(sounds[sound_name])
+                        # playsound(sound_name, False)
+                else:
+                    _play_with_simpleaudio(sounds[sound_name])
+                    # playsound(sound_name, False)
+
+
+
             if dump_fn is not None:
                 dump_fn.write(data)
             # time.sleep(1)

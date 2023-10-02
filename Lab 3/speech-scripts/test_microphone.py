@@ -75,7 +75,6 @@ try:
         rec = KaldiRecognizer(model, args.samplerate)
         while True:
             data = q.get()
-            print(rec.AcceptWaveform(data))
             if rec.AcceptWaveform(data):
                 print(rec.Result())
             else:
