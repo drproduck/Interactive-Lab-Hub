@@ -182,10 +182,23 @@ Usually, sensors need to be positioned in specific locations or orientations to 
 
 **\*\*\*Draw 5 sketches of different ways you might use your sensor, and how the larger device needs to be shaped in order to make the sensor useful.\*\*\***
 
+
+<img src="./freya_1.jpeg?raw=true" height="200"/>
+<img src="./freya_2.jpeg?raw=true" height="200"/>
+<img src="./freya_3.jpeg?raw=true" height="200"/>
+<img src="./capacitive_sensor_1.jpg?raw=true"  width="250"/>
+<img src="./capacitive_sensor_2.jpg?raw=true"  width="250"/>
+
 **\*\*\*What are some things these sketches raise as questions? What do you need to physically prototype to understand how to anwer those questions?\*\*\***
 
-**\*\*\*Pick one of these designs to prototype.\*\*\***
+Some questions that the sketches raise:
+1. The alligator clips look unpolished. How do we hide them? In the case of portable piano, we can hide them under the rubber, and attach the pi on the side so that no wires are seen.
 
+2. Similarly, where do we put the pi? In several of my designs, the capacitive objects and the pi are not necessary attached to each other as one product.
+
+3. Can we attach lights to the capacitive objects, and make it so that touching the objects will cycle through light colors?
+
+**\*\*\*Pick one of these designs to prototype.\*\*\***
 
 ### Part D
 ### Physical considerations for displaying information and housing parts
