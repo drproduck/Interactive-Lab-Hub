@@ -1,6 +1,9 @@
 # Ph-UI!!!
 
 **NAMES OF COLLABORATORS HERE**
++ Sissel Sun - rs923
++ Tingrui（Freya) Zhang - tz428
++ Khiem Pham - dpk45
 
 
 For lab this week, we focus both on sensing, to bring in new modes of input into your devices, as well as prototyping the physical look and feel of the device. You will think about the physical form the device needs to perform the sensing as well as present the display or feedback about what was sensed. 
