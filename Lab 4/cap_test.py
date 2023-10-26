@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 import time
 import board
 import busio

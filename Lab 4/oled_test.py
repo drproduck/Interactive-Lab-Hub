@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
@@ -84,4 +88,8 @@ while True:
     # draw the new circle
     draw_circle(center_x, center_y, radius)
     # show all the changes we just made
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
     oled.show()

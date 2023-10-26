@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 Adafruit-Blinka
 adafruit-circuitpython-busdevice
 adafruit-circuitpython-framebuf
@@ -23,3 +27,7 @@ RPi.GPIO
 spidev
 sysv-ipc
 sparkfun-qwiic-proximity
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059

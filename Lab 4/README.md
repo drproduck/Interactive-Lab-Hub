@@ -1,9 +1,12 @@
 # Ph-UI!!!
 
 **NAMES OF COLLABORATORS HERE**
+<<<<<<< HEAD
 + Sissel Sun - rs923
 + Tingrui（Freya) Zhang - tz428
 + Khiem Pham - dpk45
+=======
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 
 
 For lab this week, we focus both on sensing, to bring in new modes of input into your devices, as well as prototyping the physical look and feel of the device. You will think about the physical form the device needs to perform the sensing as well as present the display or feedback about what was sensed. 
@@ -198,6 +201,7 @@ Usually, sensors need to be positioned in specific locations or orientations to 
 
 **\*\*\*Draw 5 sketches of different ways you might use your sensor, and how the larger device needs to be shaped in order to make the sensor useful.\*\*\***
 
+<<<<<<< HEAD
 
 <img src="./freya_1.jpeg?raw=true" height="200"/>
 <img src="./freya_2.jpeg?raw=true" height="200"/>
@@ -217,6 +221,12 @@ Some questions that the sketches raise:
 **\*\*\*Pick one of these designs to prototype.\*\*\***
 
 We picked the portable piano idea. However, instead of having many buttons as keys, we modified the mechanism of playing notes to the one similar as playing a ukulele. The note played is determined by both the string and the fret pressed. 
+=======
+**\*\*\*What are some things these sketches raise as questions? What do you need to physically prototype to understand how to anwer those questions?\*\*\***
+
+**\*\*\*Pick one of these designs to prototype.\*\*\***
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 
 ### Part D
 ### Physical considerations for displaying information and housing parts
@@ -261,6 +271,7 @@ Think about how you want to present the information about what your sensor is se
  
 **\*\*\*Sketch 5 designs for how you would physically position your display and any buttons or knobs needed to interact with it.\*\*\***
 
+<<<<<<< HEAD
 ![Design1](design_1.jpg)
 ![Design2](design_2.jpg)
 ![Design3](design_3.jpg)
@@ -280,6 +291,9 @@ Questions:
 </ol>
 
 To answer these questions, we need to test out both the capacitive sensor and the distance sensor and prototype the interaction. We also need to physically cut out some cardboard and present different shapes to some users to figure out which design is better. 
+=======
+**\*\*\*What are some things these sketches raise as questions? What do you need to physically prototype to understand how to anwer those questions?\*\*\***
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 
 **\*\*\*Pick one of these display designs to integrate into your prototype.\*\*\***
 
@@ -288,6 +302,7 @@ To answer these questions, we need to test out both the capacitive sensor and th
 Build a cardboard prototype of your design.
 
 
+<<<<<<< HEAD
 Since our idea has a focus on portability / size, we picked the third design with joystick and capacitive sensor. We used joystick instead of buttons because we thought using 4 buttons makes the interface too crowded. On the other hand, we also tested out the distance sensor, but it cannot work precisely for objects further than 7 cm away.
 
 **\*\*\*Document your rough prototype.\*\*\***
@@ -297,6 +312,10 @@ We used the capacitive sensor to simulate different frets for users to press. He
 ![mvp](mvp.jpg)
 
 [Video demo](https://drive.google.com/file/d/1FcWzyY7KeuJpChss-Oo8PTO-4VgiaUhi/view?usp=sharing)
+=======
+**\*\*\*Document your rough prototype.\*\*\***
+
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
 
 LAB PART 2
 
@@ -369,6 +388,7 @@ Document all the prototypes and iterations you have designed and worked on! Agai
 * "Works like": shows what the device can do
 * "Acts like": shows how a person would interact with the device
 
+<<<<<<< HEAD
 We are playing the piano like an ukulele, which is a simplified ukulele with piano sounds from cardboard using 2 sensors: capacitive sensor and joystick. The joystick serves as 4 strings of the instrument and the capacitive sensors serve as 5 different intonations (frets) for each string.
 
 1. “Looks like”
@@ -399,3 +419,5 @@ Photos:
 ![Prototype Overview](photo_1.jpg)
 ![Inside Structure](photo_2.jpg)
 ![Whiteboard](photo_3.jpg)
+=======
+>>>>>>> e3978c089d22a08b986f67576c4811d235044059
