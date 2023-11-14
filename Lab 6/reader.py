@@ -16,10 +16,12 @@ def on_connect(client, userdata, flags, rc):
 	# you can subsribe to as many topics as you'd like
 	# client.subscribe('some/other/topic')
 
+msgs = []
 
 # this is the callback that gets called each time a message is recived
 def on_message(cleint, userdata, msg):
 	print(f"topic: {msg.topic} msg: {msg.payload.decode('UTF-8')}")
+	msgs.append(msg.payload.decode('UTF-8'))
 	# you can filter by topics
 	# if msg.topic == 'IDD/some/other/topic': do thing
 
@@ -42,4 +44,9 @@ client.connect(
 
 # this is blocking. to see other ways of dealing with the loop
 #  https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php#network-loop
-client.loop_forever()
+# client.loop_forever()
+
+client.loop_start()
+while True:
+	if len(msgs) > 0:
+		print(msgs[-1])
