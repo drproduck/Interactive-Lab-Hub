@@ -1,7 +1,11 @@
-
 import pygame
 from pygame import mixer
+import os
+
 pygame.init()
+pygame.display.init()
+pygame.display.set_mode((1,1))
+
 
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -70,13 +74,32 @@ while run:
         play_notes()
         beat_changed = False
 
-    # for event in pygame.event.get():
-    #     if 
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                hi_hat.play()
+                clicked[0][active_beat] = 1
+            elif event.key == pygame.K_2:
+                snare.play()
+                clicked[1][active_beat] = 1
+            elif event.key == pygame.K_3:
+                kick.play()
+                clicked[2][active_beat] = 1
+            elif event.key == pygame.K_4:
+                crash.play()
+                clicked[3][active_beat] = 1
+            elif event.key == pygame.K_5:
+                clap.play()
+                clicked[4][active_beat] = 1
+            elif event.key == pygame.K_6:
+                tom.play()
+                clicked[5][active_beat] = 1
 
     beat_length = 3600 // bpm
 
     if playing:
-        if active_length < beat_length:
+        print(active_length, beat_length, active_beat, beat_changed)
+        if active_length < beat_length: # measure time for a beat to play. This means the current beat is still playing.
             active_length += 1
         else:
             active_length = 0
